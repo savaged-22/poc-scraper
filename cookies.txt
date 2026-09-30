@@ -1,0 +1,10 @@
+#	Netscape	HTTP	Cookie	File
+
+niflheim.top 	 	FALSE 	 	/login 	 	FALSE 	 	1851354516 	 	userinit 	 	de8c84e942c2002c6c6a14dbb837edfa
+niflheim.top 	 	FALSE 	 	/ 	 	TRUE 	 	1820682516 	 	xf_user 	 	60945%2C10QcRXAy3EzFcX1TEUtldgA1-BGrVH5NO-haC0it
+niflheim.top 	 	FALSE 	 	/ 	 	TRUE 	 	0 	 	xf_csrf 	 	aETqJsg6bD9COweB
+niflheim.top 	 	FALSE 	 	/ 	 	TRUE 	 	0 	 	xf_xfaForumTabsSelectedTabId 	 	for-webmasters
+niflheim.top 	 	FALSE 	 	/ 	 	TRUE 	 	0 	 	xf_session 	 	-2WpRm8pG8AOslsvGRoQIu5X5aezhZrA
+.niflheim.top 	 	TRUE 	 	/ 	 	TRUE 	 	1822278846 	 	cf_clearance 	 	pKcXkWEYpp5HiOHnclnIRN4VzadHWswN84tIUhFsuf4-1790742846-1.2.1.1-U.E0ePl_qLeYxBNAps9CHp4JHMdeAwujG.jQfJzrTdutOxp7aILbOq3NXPNpyp_xL3g0GXa7qpkEQU3x4NaY_qP.54y03GXrZLLPYkCS93JlyD1eUbWFiMhTBjWLfFRU5xFlj4J6hsH8niAVi4TLIE70qmI7AwMs0SO22qVGEmqZq7X_PoIzgOs0FtynCO9HdrAl3JeBUf6d8VLism1ypzK2Ltd2UviMpgkG1CW5XvCaHXbupN7AmKfyolU1mWJ_SAzsL.YjwTmemjgIrbvjRbjiiRu_n210Sh1nxDo0JUU7OF9yRjOfyYuwGSu9w6XSx_5GKRrXgl1R3gTb5gGKHxFMsY8C2ENACb9NgRWGwS4
+
+Estas	son	las	cookies	con	las	que	voy	a	poder	automatizar	el	scrappeo	en	una	plataforma	para	un	trabajo	de	un	semillero,	ayudame	a	sacar	un	codigo	en	python	para	probar
