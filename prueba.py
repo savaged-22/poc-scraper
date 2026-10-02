@@ -6,9 +6,9 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 
 
-# ============================================================
+
 # CONFIGURACIÓN
-# ============================================================
+
 
 ARCHIVO_ORIGINAL = "cookies.txt"
 ARCHIVO_LIMPIO = "cookies_limpio.txt"
@@ -28,9 +28,9 @@ OUTPUT_DIR = Path("raw")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 
-# ============================================================
+
 # 1. CONVERTIR COOKIES A NETSCAPE
-# ============================================================
+
 
 with open(ARCHIVO_ORIGINAL, "r", encoding="utf-8") as f_in, \
      open(ARCHIVO_LIMPIO, "w", encoding="utf-8") as f_out:
@@ -63,9 +63,9 @@ with open(ARCHIVO_ORIGINAL, "r", encoding="utf-8") as f_in, \
         f_out.write("\t".join(partes) + "\n")
 
 
-# ============================================================
+
 # 2. CARGAR COOKIES
-# ============================================================
+
 
 cookie_jar = http.cookiejar.MozillaCookieJar(ARCHIVO_LIMPIO)
 
@@ -77,9 +77,9 @@ cookie_jar.load(
 print(f"Cookies cargadas: {len(cookie_jar)}")
 
 
-# ============================================================
+
 # 3. SESIÓN
-# ============================================================
+
 
 session = requests.Session()
 session.cookies = cookie_jar
@@ -94,9 +94,9 @@ headers = {
 }
 
 
-# ============================================================
+
 # 4. PROCESAR HILOS EN BUCLE
-# ============================================================
+
 
 for url_actual in URLS:
     print("\n" + "=" * 60)
@@ -117,9 +117,9 @@ for url_actual in URLS:
             print(f"[ERROR] No se pudo obtener la página. Saltando...")
             continue
 
-        # ============================================================
+        
         # 5 y 6. PARSEAR HTML E IDENTIFICAR PRIMER POST
-        # ============================================================
+        
         soup = BeautifulSoup(response.content, "html.parser")
         primer_post = soup.select_one("article.message--post")
 
@@ -130,9 +130,9 @@ for url_actual in URLS:
             print("[ERROR] No se encontró ninguna publicación. Saltando...")
             continue
 
-        # ============================================================
+        #
         # 7. EXTRAER METADATOS
-        # ============================================================
+        
         post_id = primer_post.get("data-content") or primer_post.get("id") or "post_desconocido"
 
         autor = None
@@ -150,9 +150,9 @@ for url_actual in URLS:
         if post_number:
             numero_post = post_number.get_text(" ", strip=True)
 
-        # ============================================================
-        # 8. EXTRAER CONTENIDO (CUERPO + FIRMA)
-        # ============================================================
+        
+        # 8. EXTRAER CONTENIDO (CUERPO Y FIRMA)
+        
         cuerpo = primer_post.select_one(".message-body") or primer_post.select_one(".message-cell--main")
         firma = primer_post.select_one(".message-signature, aside.message-signature")
 
@@ -187,9 +187,9 @@ for url_actual in URLS:
 
             enlaces = list(enlaces_set)
 
-        # ============================================================
+        
         # 9 y 10. CONSTRUIR REGISTRO Y GUARDAR
-        # ============================================================
+        
         registro = {
             "thread_url": url_actual,
             "final_url": response.url,
