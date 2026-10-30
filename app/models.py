@@ -24,9 +24,25 @@ class TaskStatus(str, Enum):
     TIMEOUT = "TIMEOUT"
 
 
+class TaskType(str, Enum):
+    SEARCH = "SEARCH"
+    SCRAPE_URL = "SCRAPE_URL"
+    SCRAPE_THREAD = "SCRAPE_THREAD"
+
+
 class SearchRequest(BaseModel):
     query: str = Field(min_length=1)
     portals: list[str] | None = None
+
+
+class ScrapeUrlRequest(BaseModel):
+    url: str = Field(min_length=1)
+    portal: str | None = None
+
+
+class ScrapeThreadRequest(BaseModel):
+    portal: str = Field(min_length=1)
+    thread_id: str = Field(min_length=1)
 
 
 class ScrapedItem(BaseModel):
@@ -34,43 +50,40 @@ class ScrapedItem(BaseModel):
 
     title: str | None = None
     url: str
+    final_url: str | None = None
 
     author: str | None = None
 
     published_at: datetime | None = None
     updated_at: datetime | None = None
 
-    content: str | None = None
+    content_text: str | None = None
+    content_html: str | None = None
+    content: str | None = None  # Retrocompatibilidad con v1
 
     category: str | None = None
     thread_id: str | None = None
     post_id: str | None = None
 
-    metadata: dict[str, Any] = Field(
-        default_factory=dict
-    )
-
-    scraped_at: datetime = Field(
-        default_factory=utc_now
-    )
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    scraped_at: datetime = Field(default_factory=utc_now)
 
 
 class ScrapingTask(BaseModel):
     task_id: str
     search_id: str
-    query: str
+    task_type: TaskType = TaskType.SEARCH
+
     portal: str
+    query: str | None = None
+    url: str | None = None
+    thread_id: str | None = None
 
     status: TaskStatus = TaskStatus.PENDING
     attempt: int = 0
 
-    created_at: datetime = Field(
-        default_factory=utc_now
-    )
-
-    queued_at: datetime = Field(
-        default_factory=utc_now
-    )
+    created_at: datetime = Field(default_factory=utc_now)
+    queued_at: datetime = Field(default_factory=utc_now)
 
     started_at: datetime | None = None
     finished_at: datetime | None = None
@@ -82,13 +95,11 @@ class ScrapingTask(BaseModel):
 class SearchJob(BaseModel):
     search_id: str
     query: str
+    job_type: TaskType = TaskType.SEARCH
 
     status: SearchStatus = SearchStatus.CREATED
 
-    created_at: datetime = Field(
-        default_factory=utc_now
-    )
-
+    created_at: datetime = Field(default_factory=utc_now)
     started_at: datetime | None = None
     finished_at: datetime | None = None
 
@@ -97,6 +108,4 @@ class SearchJob(BaseModel):
     successful_tasks: int = 0
     failed_tasks: int = 0
 
-    tasks: list[str] = Field(
-        default_factory=list
-    )
+    tasks: list[str] = Field(default_factory=list)

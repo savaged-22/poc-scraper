@@ -1,0 +1,51 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: poc_scraper_db
+    restart: unless-stopped
+    ports:
+      - "27019:27017"
+    environment:
+      MONGO_INITDB_DATABASE: scraper_db
+    volumes:
+      - mongo_scraper_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'db.runCommand({serverStatus:1}).ok' | mongosh --quiet"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - scraper-net
+
+  scraper-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: poc_scraper_api
+    restart: unless-stopped
+    ports:
+      - "8300:8300"
+    environment:
+      APP_NAME: scraper-poc
+      MONGO_URI: mongodb://mongodb:27017
+      MONGO_DB_NAME: scraper_db
+      MONGO_ENABLED: "true"
+      GLOBAL_CONCURRENCY: 8
+      DEFAULT_PORTAL_CONCURRENCY: 2
+      SECRETS_DIR: /app/secrets/cookies
+    volumes:
+      - ./secrets:/app/secrets:ro
+      - ./cookies.txt:/app/cookies.txt:ro
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - scraper-net
+
+networks:
+  scraper-net:
+    driver: bridge
+
+volumes:
+  mongo_scraper_data:
+

@@ -1,0 +1,17 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+app-v1-backup/
+pagina.html
+pagina.txt
+cookies_limpio.txt
+benchmark.py
+benchmark-v1.py
+.git
+.gitignore
+
