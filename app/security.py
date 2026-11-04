@@ -67,12 +67,26 @@ class CookieManager:
         if not raw:
             return {}
 
-        # Intentar JSON
+        # Intentar JSON (diccionario o lista de Cookie-Editor)
         if raw.startswith("{") and raw.endswith("}"):
             try:
                 data = json.loads(raw)
                 if isinstance(data, dict):
                     return {str(k): str(v) for k, v in data.items()}
+            except Exception:
+                pass
+
+        if raw.startswith("[") and raw.endswith("]"):
+            try:
+                lista_cookies = json.loads(raw)
+                cookies = {}
+                for c in lista_cookies:
+                    nombre = c.get("name")
+                    valor = c.get("value")
+                    if nombre is not None and valor is not None:
+                        cookies[str(nombre)] = str(valor)
+                if cookies:
+                    return cookies
             except Exception:
                 pass
 

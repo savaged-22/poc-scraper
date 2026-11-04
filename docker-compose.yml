@@ -18,6 +18,7 @@ services:
       - scraper-net
 
   scraper-api:
+    image: poc_scraper_api:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -48,4 +49,3 @@ networks:
 
 volumes:
   mongo_scraper_data:
-

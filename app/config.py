@@ -10,6 +10,8 @@ class Settings(BaseSettings):
 
     # Límites específicos opcionales (sobreescribibles por .env)
     portal_niflheim_concurrency: int = 2
+    portal_hard_tm_concurrency: int = 2
+    portal_cracked_st_concurrency: int = 2
     portal_blackhatworld_concurrency: int = 2
     portal_zxpk_concurrency: int = 2
 
@@ -55,6 +57,8 @@ class Settings(BaseSettings):
         """
         return {
             "niflheim": self.portal_niflheim_concurrency,
+            "hard_tm": self.portal_hard_tm_concurrency,
+            "cracked_st": self.portal_cracked_st_concurrency,
             "blackhatworld": self.portal_blackhatworld_concurrency,
             "zxpk": self.portal_zxpk_concurrency,
         }

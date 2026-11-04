@@ -2,6 +2,8 @@ import logging
 from urllib.parse import urlparse
 from .base import BasePortalAdapter
 from .blackhatworld import BlackHatWorldAdapter
+from .cracked_st import CrackedStAdapter
+from .hard_tm import HardTmAdapter
 from .niflheim import NiflheimAdapter
 from .zxpk import ZxpkAdapter
 
@@ -38,8 +40,10 @@ class AdapterRegistry:
                 adapter_domain = urlparse(adapter.base_url).netloc.lower()
                 if adapter_domain and adapter_domain in domain:
                     return name
-                # Casos particulares como dominios alternos (e.g. niflheim.top vs niflheim.world)
-                if name in domain:
+                # Casos como 'hard-tm' -> 'hard_tm', 'cracked.st' -> 'cracked_st'
+                clean_hyphen = name.replace("_", "-")
+                clean_dot = name.replace("_", ".")
+                if clean_hyphen in domain or clean_dot in domain or name in domain:
                     return name
         except Exception:
             pass
@@ -51,4 +55,6 @@ registry = AdapterRegistry()
 registry.register(NiflheimAdapter())
 registry.register(BlackHatWorldAdapter())
 registry.register(ZxpkAdapter())
+registry.register(HardTmAdapter())
+registry.register(CrackedStAdapter())
 

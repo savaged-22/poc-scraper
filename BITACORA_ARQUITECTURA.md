@@ -168,6 +168,17 @@ Guarda tus cookies en:
 ## 5. Endpoints de la API y Ejemplos de Consumo
 
 ### Iniciar el servidor
+
+#### Opción A: Con Docker (Recomendado - Base de datos y API aisladas)
+```bash
+# 1. Compilar imagen
+sudo docker build -t poc_scraper_api:latest .
+
+# 2. Levantar servicios
+sudo docker compose up -d
+```
+
+#### Opción B: Directo en local (entorno Python)
 ```bash
 /home/savaged22/tools/tools_env/bin/uvicorn app.main:app --host 0.0.0.0 --port 8300
 ```
@@ -222,4 +233,66 @@ curl http://localhost:8300/portals
 curl http://localhost:8300/health
 ```
 Retorna el estado de workers, cola activa, portales conectados y conexión a MongoDB.
+
+---
+
+## 6. Nuevo Portal Integrado: Hard-TM (`hard_tm`)
+
+Se integró el adaptador para el portal **Hard-TM** ([`app/adapters/hard_tm.py`](app/adapters/hard_tm.py)) incorporando capacidades analíticas avanzadas para investigaciones de ciberseguridad:
+
+1. **Resolución y Decodificación de Redirecciones Base64**:
+   - Resuelve automáticamente los proxies de redirección de XenForo del tipo `/redirect/?to=<base64>` decodificando el enlace real (por ejemplo a servidores de descarga Mega, anonfiles, etc.).
+2. **Soporte Flexible de Cookies (Cookie-Editor JSON y Netscape)**:
+   - Permite cargar cookies directamente exportadas en JSON desde extensiones de navegador (`[{"name": "...", "value": "..."}]`) o en formato clásico Netscape mediante `CookieManager`.
+3. **Extracción de Indicadores Forenses y Cyber Threat Intelligence (CTI)**:
+   - Almacena en `metadata`:
+     - `mentions_telegram`: Detección de canales o handles de Telegram (`@username`, `t.me/`).
+     - `mentions_email`: Detección de correos electrónicos.
+     - `mentions_database`: Menciones a bases de datos, combos, dumps o filtraciones.
+     - `mentions_credentials`: Búsqueda de patrones `mail:pass`, `log:pass`, accesos y contraseñas.
+     - `mentions_data_leak`: Identificación de leaks y brechas de seguridad.
+     - `has_hidden_content`: Detección de contenido oculto bajo restricciones de likes o respuestas.
+     - `links`: Listado completo de enlaces externos descubiertos tanto en tags `<a>` como vía regex en texto.
+4. **Colección Dedicada en MongoDB**:
+   - Los datos se almacenan automáticamente en la colección `portal_hard_tm` de MongoDB aplicando upsert por post e hilo.
+
+#### Ejemplo de invocación para Hard-TM:
+```bash
+curl -X POST http://localhost:8300/scrape/url \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://hard-tm.com/threads/201369/"
+  }'
+```
+*(El sistema detecta automáticamente que el dominio `hard-tm.com` corresponde al adaptador `hard_tm`)*.
+
+---
+
+## 7. Nuevo Portal Integrado: Cracked.st (`cracked_st`)
+
+Se integró el adaptador para el foro **Cracked.st** ([`app/adapters/cracked_st.py`](app/adapters/cracked_st.py)), especializado en plataformas **MyBB** con mitigaciones anti-DDoS:
+
+1. **Evasión de DDoS-Guard y Cloudflare con `cloudscraper`**:
+   - Integra `cloudscraper` en un worker thread asíncrono (`asyncio.to_thread`) simulando perfiles de navegador desktop, con fallback automático a `httpx` si las cookies de sesión ya tienen los tokens válidos.
+2. **Parser Especializado para MyBB**:
+   - Extracción de publicaciones mediante contenedores `div.post-set`.
+   - Resolución de autores y UIDs con triple estrategia: atributos `a[data-uid]`, análisis de URLs `action=profile&uid=(\d+)` y clases clásicas de autor (`.largetext, .username, .post_username`).
+   - Captura de reputación y likes (`span.reputation_positive`).
+   - Extracción del cuerpo (`div.post-content`), firmas (`div.signature`) y fechas precisas desde `span.post_date span[title]`.
+3. **Indicadores de CTI (Cyber Threat Intel)**:
+   - Indicadores para credenciales y tokens (`tokens`, `api key`, `credential`, `password`, `account`).
+   - Menciones a filtraciones (`leak`, `breach`, `combo`, `dump`).
+   - Enlaces y canales de Telegram (`@username`, `t.me`).
+4. **Colección Dedicada en MongoDB**:
+   - Los datos se almacenan en `portal_cracked_st` con upsert automático por post e hilo.
+
+#### Ejemplo de invocación para Cracked.st:
+```bash
+curl -X POST http://localhost:8300/scrape/url \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://cracked.st/Thread-%E2%AD%90GOOGLE-GEMINI-%E2%AD%90-API-KEY-%E2%AD%90-220K-TOKENS-%E2%AD%90-Gemini-3-8-FLASH-%E2%AD%90-Gemini-3-1-Pro-%E2%AD%90TOKIES-%E2%AD%90--2179134"
+  }'
+```
+*(El sistema detecta automáticamente que el dominio `cracked.st` corresponde al adaptador `cracked_st`)*.
 

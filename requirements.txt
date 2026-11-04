@@ -8,3 +8,4 @@ beautifulsoup4
 lxml
 pymongo==4.13.0
 motor==3.7.0
+cloudscraper==1.2.71
